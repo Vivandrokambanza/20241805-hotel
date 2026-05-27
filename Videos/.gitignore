@@ -1,0 +1,22 @@
+# Ignorar tudo por padrão
+*
+
+# Permitir apenas os projetos de jogo
+!ShooterGame/
+ShooterGame/bin/
+ShooterGame/obj/
+!ShooterGame/**
+ShooterGame/**/bin/
+ShooterGame/**/obj/
+
+!MobileWarShooter/
+!MobileWarShooter/**
+MobileWarShooter/Library/
+MobileWarShooter/Temp/
+MobileWarShooter/Logs/
+MobileWarShooter/UserSettings/
+MobileWarShooter/*.sln
+MobileWarShooter/*.csproj
+
+# Permitir este .gitignore e o README
+!.gitignore
