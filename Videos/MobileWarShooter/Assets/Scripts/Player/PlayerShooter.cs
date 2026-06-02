@@ -26,11 +26,19 @@ namespace WarZone
         private float _reloadTime;
         private float _bulletSpeed;
 
+        public static PlayerShooter Instance { get; private set; }
+
         public int  CurrentAmmo  => _currentAmmo;
         public int  MagazineSize => _magazineSize;
         public bool IsReloading  => _isReloading;
 
         public event System.Action<int, int> OnAmmoChanged;  // (current, max)
+
+        void Awake()
+        {
+            if (Instance != null) { Destroy(gameObject); return; }
+            Instance = this;
+        }
 
         void Start()
         {
