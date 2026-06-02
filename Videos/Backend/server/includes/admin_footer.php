@@ -5,6 +5,6 @@
         <p>&copy; <?= date('Y') ?> Hotel Vivandro — Backoffice de Administração</p>
     </div>
 </footer>
-<script src="<?= BASE_URL ?>/js/main.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
 </body>
 </html>
