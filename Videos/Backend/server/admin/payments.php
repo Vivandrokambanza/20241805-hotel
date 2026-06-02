@@ -124,10 +124,10 @@ include __DIR__ . '/../includes/admin_header.php';
         </div>
         <div class="table-wrapper">
             <table>
-                <thead><tr><th>Data</th><th>Reserva</th><th>Cliente</th><th>Montante</th><th>Tipo</th><th>Operador</th></tr></thead>
+                <thead><tr><th>Data</th><th>Reserva</th><th>Cliente</th><th>Montante</th><th>Tipo</th><th>Operador</th><th></th></tr></thead>
                 <tbody>
                 <?php if (empty($payments)): ?>
-                    <tr><td colspan="6" class="text-center" style="padding:1.5rem;color:#888">Nenhum pagamento registado.</td></tr>
+                    <tr><td colspan="7" class="text-center" style="padding:1.5rem;color:#888">Nenhum pagamento registado.</td></tr>
                 <?php endif; ?>
                 <?php foreach ($payments as $p): ?>
                 <tr>
@@ -137,6 +137,7 @@ include __DIR__ . '/../includes/admin_header.php';
                     <td><strong><?= formatMoney($p['amount']) ?></strong></td>
                     <td><?= $p['payment_type'] === 'total' ? 'Total' : 'Parcial' ?></td>
                     <td><?= e($p['op_name']) ?></td>
+                    <td><a href="comprovativo.php?id=<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-secondary" title="Comprovativo">🖨️</a></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
