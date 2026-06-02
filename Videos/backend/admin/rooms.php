@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $pageTitle = 'Quartos';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 requireRole('manager');
 $pdo = getDB();
@@ -101,3 +103,4 @@ include __DIR__ . '/../includes/admin_header.php';
     </div>
 </div>
 <?php include __DIR__ . '/../includes/admin_footer.php'; ?>
+

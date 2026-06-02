@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $pageTitle = 'Detalhe de Reserva';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 $pdo = getDB();
 
@@ -412,3 +414,4 @@ include __DIR__ . '/../includes/admin_header.php';
 <?php endif; ?>
 
 <?php include __DIR__ . '/../includes/admin_footer.php'; ?>
+

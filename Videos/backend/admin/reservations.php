@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $pageTitle = 'Reservas';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 requireRole('receptionist', 'manager');
 $pdo = getDB();
@@ -98,3 +100,4 @@ function applyFilter(key, val) {
 }
 </script>
 <?php include __DIR__ . '/../includes/admin_footer.php'; ?>
+

@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $pageTitle = 'Check-in / Check-out';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 requireRole('receptionist', 'manager');
 $pdo = getDB();
@@ -86,3 +88,4 @@ include __DIR__ . '/../includes/admin_header.php';
 <?php endif; ?>
 
 <?php include __DIR__ . '/../includes/admin_footer.php'; ?>
+
