@@ -28,7 +28,7 @@ $currentFile = basename($_SERVER['PHP_SELF']);
             <span class="badge badge-<?= $_isManager ? 'purple' : 'blue' ?>"><?= $_isManager ? 'Gestor' : 'Rececionista' ?></span>
             <span><?= e($_currentUser['name']) ?></span>
             <a href="<?= BASE_URL ?>/index.php" class="btn btn-sm btn-outline">Site</a>
-            <a href="<?= BASE_URL ?>/logout.php" class="btn btn-sm btn-outline">Sair</a>
+            <a href="<?= BASE_URL ?>/auth/logout.php" class="btn btn-sm btn-outline">Sair</a>
         </div>
     </div>
 </header>

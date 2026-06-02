@@ -1,8 +1,8 @@
 <?php
 $pageTitle = 'As Minhas Reservas';
-require_once __DIR__ . '/includes/functions.php';
-require_once __DIR__ . '/includes/db.php';
-require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 requireRole('client');
 
 $pdo    = getDB();
@@ -25,7 +25,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $reservations = $stmt->fetchAll();
 
-include __DIR__ . '/includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="section">
@@ -106,4 +106,4 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

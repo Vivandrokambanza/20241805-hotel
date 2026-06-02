@@ -29,16 +29,16 @@ $_isAdmin = in_array($_role, ['manager', 'receptionist']);
             <?php endif; ?>
             <?php if (isLoggedIn()): ?>
                 <?php if ($_role === 'client'): ?>
-                    <a href="<?= BASE_URL ?>/book.php">Reservar</a>
-                    <a href="<?= BASE_URL ?>/my-reservations.php">As Minhas Reservas</a>
+                    <a href="<?= BASE_URL ?>/bookings/book.php">Reservar</a>
+                    <a href="<?= BASE_URL ?>/bookings/my-reservations.php">As Minhas Reservas</a>
                 <?php endif; ?>
                 <div class="nav-user">
                     <span>Olá, <?= e($_currentUser['name']) ?></span>
-                    <a href="<?= BASE_URL ?>/logout.php" class="btn btn-sm btn-outline">Sair</a>
+                    <a href="<?= BASE_URL ?>/auth/logout.php" class="btn btn-sm btn-outline">Sair</a>
                 </div>
             <?php else: ?>
-                <a href="<?= BASE_URL ?>/login.php" class="btn btn-sm">Entrar</a>
-                <a href="<?= BASE_URL ?>/register.php" class="btn btn-sm btn-outline">Registar</a>
+                <a href="<?= BASE_URL ?>/auth/login.php" class="btn btn-sm">Entrar</a>
+                <a href="<?= BASE_URL ?>/auth/register.php" class="btn btn-sm btn-outline">Registar</a>
             <?php endif; ?>
         </nav>
     </div>
