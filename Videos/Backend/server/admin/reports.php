@@ -56,6 +56,20 @@ $dailyOcc = $pdo->prepare('
 $dailyOcc->execute([$monthStart, $monthStart, $monthEnd]);
 $dailyOcc = $dailyOcc->fetchAll();
 
+// Currently occupied rooms list
+$occupiedRoomsList = $pdo->query('
+    SELECT r.room_number, r.floor, rt.name AS room_type,
+           u.name AS client_name, res.start_date, res.end_date,
+           rr.checkin_at
+    FROM reservation_rooms rr
+    JOIN rooms r         ON rr.room_id = r.id
+    JOIN room_types rt   ON r.room_type_id = rt.id
+    JOIN reservations res ON rr.reservation_id = res.id
+    JOIN users u          ON res.user_id = u.id
+    WHERE rr.checkout_at IS NULL AND res.status = "checked_in"
+    ORDER BY r.floor, r.room_number
+')->fetchAll();
+
 // Guest history (top guests)
 $topGuests = $pdo->query('
     SELECT u.name, u.email, COUNT(r.id) AS total_res,
@@ -136,6 +150,32 @@ include __DIR__ . '/../includes/admin_header.php';
             </tbody>
         </table>
     </div>
+</div>
+
+<!-- Currently occupied rooms -->
+<div class="detail-card" style="margin-bottom:1.5rem">
+    <h3>🚪 Quartos Atualmente Ocupados (<?= count($occupiedRoomsList) ?>/<?= $totalRooms ?>)</h3>
+    <?php if (empty($occupiedRoomsList)): ?>
+        <p style="color:#888;margin-top:.75rem">Nenhum quarto ocupado neste momento.</p>
+    <?php else: ?>
+    <div class="table-wrapper" style="margin-top:.75rem">
+        <table>
+            <thead><tr><th>Quarto</th><th>Piso</th><th>Tipo</th><th>Hóspede</th><th>Check-in</th><th>Check-out Prev.</th></tr></thead>
+            <tbody>
+            <?php foreach ($occupiedRoomsList as $or): ?>
+            <tr>
+                <td><strong><?= e($or['room_number']) ?></strong></td>
+                <td><?= e($or['floor']) ?></td>
+                <td><?= e($or['room_type']) ?></td>
+                <td><?= e($or['client_name']) ?></td>
+                <td><?= e(formatDatetime($or['checkin_at'])) ?></td>
+                <td><?= e(formatDate($or['end_date'])) ?></td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Top guests -->
