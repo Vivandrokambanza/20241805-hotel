@@ -59,20 +59,55 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
         <h2 class="section-title text-center">Política de Cancelamento</h2>
         <div style="max-width:700px;margin:0 auto">
-            <div class="policy-box">
-                <strong>⚠️ Regras de Edição e Cancelamento</strong>
-                As reservas podem ser editadas ou canceladas <strong>gratuitamente até 24 horas antes</strong>
-                do início da estadia. Alterações dentro das 24 horas anteriores ao check-in não são permitidas.
-                Em caso de cancelamento tardio, poderá ser aplicada uma penalização correspondente a
-                <strong>1 noite de estadia</strong>.
+
+            <div class="detail-card" style="margin-bottom:1rem">
+                <h3>📋 Cenários de Cancelamento</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Situação</th>
+                                <th>Antecedência</th>
+                                <th>Penalização</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Cancelamento livre</td>
+                                <td>Mais de 24 h antes do check-in</td>
+                                <td><span class="badge badge-green">Sem custo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Cancelamento tardio</td>
+                                <td>Menos de 24 h antes do check-in</td>
+                                <td>Equivalente a <strong>1 noite</strong> de estadia (cobrada pelo rececionista)</td>
+                            </tr>
+                            <tr>
+                                <td>No-show</td>
+                                <td>Não comparência sem aviso</td>
+                                <td>Equivalente a <strong>1 noite</strong> de estadia (cobrada pelo rececionista)</td>
+                            </tr>
+                            <tr>
+                                <td>Saída antecipada</td>
+                                <td>Check-out antes da data prevista</td>
+                                <td>Cobradas as noites reservadas na íntegra</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size:.82rem;color:#777;margin-top:.75rem">
+                    As penalizações de cancelamento tardio e no-show são registadas manualmente pela receção como pagamento parcial ou total.
+                    O cliente pode editar ou cancelar a reserva diretamente na área pessoal enquanto faltarem mais de 24 horas para o check-in.
+                </p>
             </div>
-            <div class="grid-2" style="gap:1rem;margin-top:1.5rem">
+
+            <div class="grid-2" style="gap:1rem;margin-top:1rem">
                 <div class="detail-card">
                     <h3>📅 Check-in / Check-out</h3>
                     <div class="dl">
                         <dt>Check-in</dt><dd>A partir das 14h00</dd>
                         <dt>Check-out</dt><dd>Até às 12h00</dd>
-                        <dt>Late Check-out</dt><dd>Mediante disponibilidade</dd>
+                        <dt>Late Check-out</dt><dd>Mediante disponibilidade e acordo prévio</dd>
                     </div>
                 </div>
                 <div class="detail-card">
@@ -83,6 +118,13 @@ include __DIR__ . '/includes/header.php';
                         <dt>Crianças &lt; 3 anos</dt><dd>Gratuito</dd>
                     </div>
                 </div>
+            </div>
+
+            <div class="policy-box" style="margin-top:1rem">
+                <strong>Regra de 24 horas</strong><br>
+                A plataforma bloqueia automaticamente qualquer edição ou cancelamento a menos de
+                <strong>24 horas</strong> do início da estadia. Para situações de força maior, contacte
+                diretamente a receção do hotel.
             </div>
         </div>
     </div>
