@@ -27,7 +27,7 @@ function currentUser(): ?array {
 
 function requireLogin(): void {
     if (!isLoggedIn()) {
-        header('Location: ' . BASE_URL . '/auth/login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
+        header('Location: ' . BASE_URL . '/login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
         exit;
     }
 }
@@ -67,7 +67,7 @@ function logoutUser(): void {
         logAction('logout', 'users', $_SESSION['user_id'], 'User logged out');
     }
     session_destroy();
-    header('Location: ' . BASE_URL . '/auth/login.php');
+    header('Location: ' . BASE_URL . '/login.php');
     exit;
 }
 
