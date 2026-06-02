@@ -18,5 +18,8 @@ MobileWarShooter/UserSettings/
 MobileWarShooter/*.sln
 MobileWarShooter/*.csproj
 
+!HotelManager/
+!HotelManager/**
+
 # Permitir este .gitignore e o README
 !.gitignore
