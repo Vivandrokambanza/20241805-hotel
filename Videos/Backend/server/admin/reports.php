@@ -19,6 +19,11 @@ $stmt->execute([$monthStart, $monthEnd]);
 $byStatus = [];
 foreach ($stmt->fetchAll() as $row) $byStatus[$row['status']] = $row['cnt'];
 
+// Future reservations (start_date > today, not cancelled)
+$futureCount = (int)$pdo->prepare('SELECT COUNT(*) FROM reservations WHERE start_date > CURDATE() AND status IN ("pending","active")')->execute() ? 0 : 0;
+$fcStmt = $pdo->query('SELECT COUNT(*) FROM reservations WHERE start_date > CURDATE() AND status IN ("pending","active")');
+$futureCount = (int)$fcStmt->fetchColumn();
+
 // Revenue by period
 $revenue = (float)$pdo->prepare('SELECT COALESCE(SUM(amount),0) FROM payments WHERE payment_date BETWEEN ? AND ?')->execute([$monthStart,$monthEnd]) ? 0 : 0;
 $revStmt = $pdo->prepare('SELECT COALESCE(SUM(amount),0) AS total FROM payments WHERE payment_date BETWEEN ? AND ?');
@@ -105,10 +110,24 @@ include __DIR__ . '/../includes/admin_header.php';
 <div class="grid-2" style="gap:1.5rem;margin-bottom:1.5rem">
     <!-- Reservations by status -->
     <div class="detail-card">
-        <h3>📊 Reservas por Estado</h3>
-        <div class="table-wrapper" style="margin-top:.75rem">
+        <h3>📊 Reservas por Estado <small style="font-weight:400;color:#888">(no período)</small></h3>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin:.75rem 0 1rem">
+            <div style="text-align:center;padding:.5rem 1rem;background:#e8f4fd;border-radius:6px">
+                <div style="font-size:1.4rem;font-weight:700;color:#2563eb"><?= $futureCount ?></div>
+                <div style="font-size:.75rem;color:#555">Futuras (globais)</div>
+            </div>
+            <div style="text-align:center;padding:.5rem 1rem;background:#e8f8ee;border-radius:6px">
+                <div style="font-size:1.4rem;font-weight:700;color:#198754"><?= ($byStatus['checked_in']??0) ?></div>
+                <div style="font-size:.75rem;color:#555">Ativas (check-in)</div>
+            </div>
+            <div style="text-align:center;padding:.5rem 1rem;background:#fdf0e8;border-radius:6px">
+                <div style="font-size:1.4rem;font-weight:700;color:#dc3545"><?= ($byStatus['cancelled']??0) ?></div>
+                <div style="font-size:.75rem;color:#555">Canceladas</div>
+            </div>
+        </div>
+        <div class="table-wrapper">
             <table>
-                <thead><tr><th>Estado</th><th>Contagem</th></tr></thead>
+                <thead><tr><th>Estado</th><th>Contagem no Período</th></tr></thead>
                 <tbody>
                 <?php foreach (['pending'=>'Pendentes','active'=>'Confirmadas','checked_in'=>'Check-in Feito','completed'=>'Concluídas','cancelled'=>'Canceladas'] as $s=>$l): ?>
                 <tr><td><?= $l ?></td><td><strong><?= $byStatus[$s]??0 ?></strong></td></tr>
