@@ -26,7 +26,7 @@ function nightsBetween(string $start, string $end): int {
     return max(0, (int)$s->diff($e)->days);
 }
 
-function calculateTotal(array $rt, int $numRooms, int $numGuests, bool $breakfast, string $start, string $end): float {
+function calculateTotal(array $rt, int $numRooms, int $numGuests, bool $breakfast, string $start, string $end, int $numChildren = 0): float {
     $nights = nightsBetween($start, $end);
     if ($nights <= 0) return 0;
 
@@ -37,8 +37,10 @@ function calculateTotal(array $rt, int $numRooms, int $numGuests, bool $breakfas
     $extraGuests = max(0, $numGuests - $baseCapacityTotal);
     $extraSurcharge = $extraGuests * $rt['extra_guest_surcharge'] * $nights;
 
-    // Breakfast: children < 3 are free; we track only count of adults for simplicity
-    $breakfastCost = $breakfast ? ($rt['breakfast_cost_per_guest'] * $numGuests * $nights) : 0;
+    // Breakfast: crianças < 3 anos são GRATUITAS (proposta fase 1)
+    // numGuests já exclui crianças < 3 passadas via $numChildren
+    $payingGuests = max(0, $numGuests - $numChildren);
+    $breakfastCost = $breakfast ? ($rt['breakfast_cost_per_guest'] * $payingGuests * $nights) : 0;
 
     return round($base + $extraSurcharge + $breakfastCost, 2);
 }

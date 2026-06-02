@@ -52,10 +52,12 @@ CREATE TABLE reservations (
     room_type_id    INT             NOT NULL,
     num_rooms       INT             NOT NULL DEFAULT 1,
     num_guests      INT             NOT NULL DEFAULT 1,
+    num_children    INT             NOT NULL DEFAULT 0,
     start_date      DATE            NOT NULL,
     end_date        DATE            NOT NULL,
     include_breakfast BOOLEAN       NOT NULL DEFAULT FALSE,
     nif             VARCHAR(9)      DEFAULT NULL,
+    guest_registered BOOLEAN        NOT NULL DEFAULT FALSE,
     status          ENUM('pending','active','checked_in','completed','cancelled') NOT NULL DEFAULT 'pending',
     total_estimated DECIMAL(10,2)   NOT NULL DEFAULT 0.00,
     total_paid      DECIMAL(10,2)   NOT NULL DEFAULT 0.00,
@@ -117,12 +119,12 @@ INSERT INTO users (name, email, password_hash, role) VALUES
 INSERT INTO users (name, email, password_hash, role) VALUES
 ('Ana Rececionista', 'rececionista@hotel.pt', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'receptionist');
 
--- Room types
+-- Room types (capacidades conforme proposta fase 1: Duplo 4-5 pessoas, Casal 3 pessoas, Familiar 6-7 pessoas)
 INSERT INTO room_types (name, base_capacity, max_capacity, base_daily_rate, breakfast_cost_per_guest, extra_guest_surcharge, description, amenities) VALUES
-('Duplo',    2, 4, 80.00,  10.00, 20.00, 'Quarto duplo com duas camas individuais, ideal para amigos ou colegas.', 'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada'),
-('Casal',    2, 3, 90.00,  10.00, 20.00, 'Quarto de casal com cama de casal, ambiente romântico e acolhedor.',   'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada,Minibar'),
-('Familiar', 4, 6, 130.00, 10.00, 15.00, 'Quarto familiar espaçoso com cama de casal e beliche, perfeito para famílias.', 'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada,Varanda'),
-('Suite',    2, 5, 200.00, 10.00, 25.00, 'Suite de luxo com sala de estar separada, vista panorâmica e serviços premium.', 'Wi-Fi,TV 4K,Ar Condicionado,Casa de Banho de Luxo,Minibar,Varanda,Jacuzzi');
+('Duplo',    2, 5, 80.00,  10.00, 20.00, 'Quarto duplo com duas camas individuais, ideal para amigos ou colegas.', 'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada'),
+('Casal',    2, 3, 90.00,  10.00, 20.00, 'Quarto de casal com cama de casal, ambiente romantico e acolhedor.',   'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada,Minibar'),
+('Familiar', 4, 7, 130.00, 10.00, 15.00, 'Quarto familiar espacoso com cama de casal e beliche, perfeito para familias.', 'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada,Varanda'),
+('Suite',    2, 5, 200.00, 10.00, 25.00, 'Suite de luxo com sala de estar separada, vista panoramica e servicos premium.', 'Wi-Fi,TV 4K,Ar Condicionado,Casa de Banho de Luxo,Minibar,Varanda,Jacuzzi');
 
 -- 20 rooms (5 of each type, floors 1-4)
 INSERT INTO rooms (room_number, room_type_id, floor) VALUES
