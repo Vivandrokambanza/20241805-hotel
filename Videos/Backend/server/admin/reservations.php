@@ -1,6 +1,7 @@
 <?php
 $pageTitle = 'Reservas';
 require_once __DIR__ . '/../includes/db.php';
+requireRole('receptionist', 'manager');
 $pdo = getDB();
 
 $status    = get('status', 'all');
