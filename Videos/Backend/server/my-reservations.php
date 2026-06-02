@@ -80,11 +80,16 @@ include __DIR__ . '/includes/header.php';
                         </td>
                         <td class="td-actions">
                             <a href="reservation.php?id=<?= $res['id'] ?>" class="btn btn-sm btn-secondary">Ver</a>
-                            <?php if (in_array($res['status'], ['pending','active']) && canEditReservation($res['start_date'])): ?>
-                                <a href="reservation.php?id=<?= $res['id'] ?>&action=edit" class="btn btn-sm btn-warning">Editar</a>
-                                <a href="reservation.php?id=<?= $res['id'] ?>&action=cancel"
-                                    class="btn btn-sm btn-danger"
-                                    data-confirm="Tem a certeza que pretende cancelar esta reserva?">Cancelar</a>
+                            <?php if (in_array($res['status'], ['pending','active'])): ?>
+                                <?php if (canEditReservation($res['start_date'])): ?>
+                                    <a href="reservation.php?id=<?= $res['id'] ?>&action=edit" class="btn btn-sm btn-warning">Editar</a>
+                                    <a href="reservation.php?id=<?= $res['id'] ?>&action=cancel"
+                                        class="btn btn-sm btn-danger"
+                                        data-confirm="Tem a certeza que pretende cancelar esta reserva?">Cancelar</a>
+                                <?php else: ?>
+                                    <span title="Edição/cancelamento bloqueado — faltam menos de 24 h para o check-in"
+                                          style="font-size:.78rem;color:#c0392b;white-space:nowrap">⚠️ &lt;24 h</span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -93,6 +98,11 @@ include __DIR__ . '/includes/header.php';
             </table>
         </div>
         <?php endif; ?>
+
+        <div class="policy-box" style="margin-top:1.5rem">
+            Pode <strong>editar ou cancelar</strong> uma reserva até <strong>24 horas antes do check-in</strong>.
+            Reservas assinaladas com <strong style="color:#c0392b">⚠️ &lt;24 h</strong> já não podem ser alteradas — contacte a receção para situações de força maior.
+        </div>
     </div>
 </section>
 
