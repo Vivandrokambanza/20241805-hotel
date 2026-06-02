@@ -144,16 +144,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/admin/reservation-detail.php?id=' . $id);
     }
     if ($act === 'checkout' && $res['status'] === 'checked_in') {
-        $rrStmt = $pdo->prepare('SELECT room_id FROM reservation_rooms WHERE reservation_id = ? AND checkout_at IS NULL');
-        $rrStmt->execute([$id]);
-        foreach ($rrStmt->fetchAll() as $rr) {
-            $pdo->prepare('UPDATE rooms SET status = "available" WHERE id = ?')->execute([$rr['room_id']]);
+        // Registo do hóspede no checkout (proposta fase 1: "quando o cliente fizer check-out criar hóspede")
+        $guestName    = trim(post('guest_name'));
+        $guestDocType = post('guest_doc_type') ?: null;
+        $guestDocNum  = trim(post('guest_doc_number')) ?: null;
+        $guestNif     = preg_replace('/\D/', '', post('guest_nif'));
+        $guestPhone   = trim(post('guest_phone')) ?: null;
+
+        if ($guestNif && !validateNIF($guestNif)) {
+            $errors[] = 'NIF do hóspede inválido.';
         }
-        $pdo->prepare('UPDATE reservation_rooms SET checkout_at = NOW() WHERE reservation_id = ?')->execute([$id]);
-        $pdo->prepare('UPDATE reservations SET status = "completed" WHERE id = ?')->execute([$id]);
-        logAction('checkout', 'reservations', $id, 'Admin performed check-out');
-        flash("Check-out efetuado para reserva #{$id}.");
-        redirect('/admin/reservation-detail.php?id=' . $id);
+        if ($errors) {
+            // Fall through to re-render page with errors
+        } else {
+            // Update guest profile
+            if ($guestName || $guestDocType || $guestDocNum || $guestNif || $guestPhone) {
+                $updateFields = [];
+                $updateParams = [];
+                if ($guestName)    { $updateFields[] = 'name = ?';            $updateParams[] = $guestName; }
+                if ($guestDocType) { $updateFields[] = 'document_type = ?';   $updateParams[] = $guestDocType; }
+                if ($guestDocNum)  { $updateFields[] = 'document_number = ?'; $updateParams[] = $guestDocNum; }
+                if ($guestNif)     { $updateFields[] = 'nif = ?';             $updateParams[] = $guestNif; }
+                if ($guestPhone)   { $updateFields[] = 'phone = ?';           $updateParams[] = $guestPhone; }
+                if ($updateFields) {
+                    $updateParams[] = $res['user_id'];
+                    $pdo->prepare('UPDATE users SET ' . implode(', ', $updateFields) . ' WHERE id = ?')->execute($updateParams);
+                }
+            }
+            // Mark guest as registered and perform checkout
+            $rrStmt = $pdo->prepare('SELECT room_id FROM reservation_rooms WHERE reservation_id = ? AND checkout_at IS NULL');
+            $rrStmt->execute([$id]);
+            foreach ($rrStmt->fetchAll() as $rr) {
+                $pdo->prepare('UPDATE rooms SET status = "available" WHERE id = ?')->execute([$rr['room_id']]);
+            }
+            $pdo->prepare('UPDATE reservation_rooms SET checkout_at = NOW() WHERE reservation_id = ?')->execute([$id]);
+            $pdo->prepare('UPDATE reservations SET status = "completed", guest_registered = 1 WHERE id = ?')->execute([$id]);
+            logAction('checkout', 'reservations', $id, 'Check-out + registo hóspede: ' . ($guestName ?: $res['client_name']));
+            flash("Check-out efetuado e hóspede registado para reserva #{$id}.");
+            redirect('/admin/reservation-detail.php?id=' . $id);
+        }
     }
     if ($act === 'edit') {
         $checkIn   = post('check_in');
@@ -216,9 +245,7 @@ include __DIR__ . '/../includes/admin_header.php';
     </form>
     <?php endif; ?>
     <?php if ($res['status'] === 'checked_in'): ?>
-    <form method="post"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="_action" value="checkout">
-        <button class="btn btn-warning">🚪 Efectuar Check-out</button>
-    </form>
+        <button class="btn btn-warning" onclick="document.getElementById('checkout-form').style.display='block';this.style.display='none'">🚪 Efectuar Check-out + Registar Hóspede</button>
     <?php endif; ?>
     <?php if (in_array($res['status'], ['pending','active'])): ?>
     <form method="post"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="_action" value="cancel">
@@ -227,6 +254,58 @@ include __DIR__ . '/../includes/admin_header.php';
     <?php endif; ?>
     <a href="payments.php?reservation_id=<?= $id ?>" class="btn btn-secondary">💰 Registar Pagamento</a>
 </div>
+
+<?php if ($res['status'] === 'checked_in'): ?>
+<!-- Formulário de Checkout com Registo de Hóspede (proposta fase 1) -->
+<div id="checkout-form" style="display:<?= !empty($errors) ? 'block' : 'none' ?>" class="detail-card" style="margin-bottom:1.5rem">
+    <h3>🚪 Check-out + Registo do Hóspede</h3>
+    <p style="color:#555;font-size:.9rem;margin:.5rem 0 1rem">
+        Confirme ou complete os dados do hóspede antes de efectuar o check-out. Este registo formaliza a estadia no sistema do hotel.
+    </p>
+    <?php
+    $guestStmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+    $guestStmt->execute([$res['user_id']]);
+    $guestData = $guestStmt->fetch();
+    ?>
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="_action" value="checkout">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nome do Hóspede</label>
+                <input type="text" name="guest_name" class="form-control" value="<?= e($guestData['name']) ?>" placeholder="Nome completo">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <input type="tel" name="guest_phone" class="form-control" value="<?= e($guestData['phone']) ?>" placeholder="+351 9XX XXX XXX">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tipo de Documento</label>
+                <select name="guest_doc_type" class="form-control">
+                    <option value="">-- Selecionar --</option>
+                    <option value="cc" <?= $guestData['document_type']==='cc'?'selected':'' ?>>Cartão de Cidadão</option>
+                    <option value="passport" <?= $guestData['document_type']==='passport'?'selected':'' ?>>Passaporte</option>
+                    <option value="other" <?= $guestData['document_type']==='other'?'selected':'' ?>>Outro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Número do Documento</label>
+                <input type="text" name="guest_doc_number" class="form-control" value="<?= e($guestData['document_number']) ?>" placeholder="Número do documento de identificação">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">NIF <span style="font-weight:400;color:#888">(opcional, apenas para clientes portugueses)</span></label>
+            <input type="text" name="guest_nif" class="form-control" value="<?= e($guestData['nif']) ?>" maxlength="9" placeholder="123456789">
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:center">
+            <button type="submit" class="btn btn-warning">✓ Confirmar Check-out e Registar Hóspede</button>
+            <button type="button" onclick="document.getElementById('checkout-form').style.display='none';document.querySelector('[onclick*=checkout-form]').style.display='inline-block'" class="btn btn-secondary">Cancelar</button>
+        </div>
+    </form>
+</div>
+<?php endif; ?>
 
 <div class="detail-grid">
     <div class="detail-card">
@@ -238,8 +317,10 @@ include __DIR__ . '/../includes/admin_header.php';
             <dt>Check-out</dt><dd><?= e(formatDate($res['end_date'])) ?></dd>
             <dt>Noites</dt><dd><?= $nights ?></dd>
             <dt>Quartos</dt><dd><?= e($res['num_rooms']) ?></dd>
-            <dt>Hóspedes</dt><dd><?= e($res['num_guests']) ?></dd>
+            <dt>Adultos</dt><dd><?= e($res['num_guests']) ?></dd>
+            <?php if (!empty($res['num_children'])): ?><dt>Crianças &lt;3</dt><dd><?= e($res['num_children']) ?> <span class="badge badge-green">Gratuitas</span></dd><?php endif; ?>
             <dt>P. Almoço</dt><dd><?= $res['include_breakfast'] ? 'Sim' : 'Não' ?></dd>
+            <dt>Hóspede Reg.</dt><dd><?= $res['guest_registered'] ? '<span class="badge badge-green">✓ Registado</span>' : '<span class="badge badge-orange">Pendente</span>' ?></dd>
             <?php if ($res['nif']): ?><dt>NIF</dt><dd><?= e($res['nif']) ?></dd><?php endif; ?>
             <?php if ($res['notes']): ?><dt>Notas</dt><dd><?= e($res['notes']) ?></dd><?php endif; ?>
             <dt>Criada</dt><dd><?= e(formatDatetime($res['created_at'])) ?></dd>
