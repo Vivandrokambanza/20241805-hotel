@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace WarZone
 {
@@ -38,6 +39,21 @@ namespace WarZone
         [SerializeField] private GameObject      _revivePanel;
         [SerializeField] private Button          _watchAdBtn;
         [SerializeField] private Button          _declineBtn;
+
+        [Header("Boss HP Bar")]
+        [SerializeField] private GameObject      _bossHpBar;
+        [SerializeField] private Slider          _bossHpSlider;
+        [SerializeField] private TextMeshProUGUI _bossNameText;
+        [SerializeField] private TextMeshProUGUI _bossPhaseBanner;
+
+        [Header("Upgrade Panel")]
+        [SerializeField] private GameObject      _upgradePanel;
+
+        [Header("Victory")]
+        [SerializeField] private GameObject      _victoryPanel;
+
+        [Header("Countdown")]
+        [SerializeField] private TextMeshProUGUI _countdownText;
 
         void Awake()
         {
@@ -113,6 +129,67 @@ namespace WarZone
             _declineBtn?.onClick.RemoveAllListeners();
             _watchAdBtn?.onClick.AddListener(() => { _revivePanel.SetActive(false); onAccept?.Invoke(); });
             _declineBtn?.onClick.AddListener(() => { _revivePanel.SetActive(false); onDecline?.Invoke(); });
+        }
+
+        // ── Boss HP Bar ───────────────────────────────────────────────────────
+        public void ShowBossHPBar(string bossName, int maxHp)
+        {
+            if (_bossHpBar) _bossHpBar.SetActive(true);
+            if (_bossNameText) _bossNameText.text = bossName;
+            if (_bossHpSlider) { _bossHpSlider.maxValue = maxHp; _bossHpSlider.value = maxHp; }
+        }
+
+        public void UpdateBossHP(int current, int max)
+        {
+            if (_bossHpSlider) _bossHpSlider.value = current;
+        }
+
+        public void HideBossHPBar()
+        {
+            if (_bossHpBar) _bossHpBar.SetActive(false);
+        }
+
+        public void ShowBossPhase2Banner(string bossName)
+        {
+            if (_bossPhaseBanner == null) return;
+            _bossPhaseBanner.text = $"{bossName} — FASE 2!";
+            StartCoroutine(ShowThenHide(_bossPhaseBanner.gameObject, 2f));
+        }
+
+        // ── Upgrade Panel ─────────────────────────────────────────────────────
+        public void ShowUpgradePanel(List<UpgradeCard> cards, System.Action<UpgradeCard> onChosen)
+        {
+            if (_upgradePanel) _upgradePanel.SetActive(true);
+        }
+
+        public void HideUpgradePanel()
+        {
+            if (_upgradePanel) _upgradePanel.SetActive(false);
+        }
+
+        // ── Victory ───────────────────────────────────────────────────────────
+        public void ShowVictoryScreen()
+        {
+            if (_victoryPanel) _victoryPanel.SetActive(true);
+        }
+
+        // ── Countdown ─────────────────────────────────────────────────────────
+        public void ShowCountdown(float duration)
+        {
+            if (_countdownText) StartCoroutine(CountdownCoroutine(duration));
+        }
+
+        private IEnumerator CountdownCoroutine(float duration)
+        {
+            _countdownText.gameObject.SetActive(true);
+            float t = duration;
+            while (t > 0f)
+            {
+                _countdownText.text = Mathf.CeilToInt(t).ToString();
+                t -= Time.deltaTime;
+                yield return null;
+            }
+            _countdownText.gameObject.SetActive(false);
         }
 
         private IEnumerator ShowThenHide(GameObject obj, float delay)
