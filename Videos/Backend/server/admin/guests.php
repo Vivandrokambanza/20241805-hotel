@@ -1,7 +1,9 @@
 <?php
 $pageTitle = 'Hóspedes';
 require_once __DIR__ . '/../includes/db.php';
+requireRole('receptionist', 'manager');
 $pdo = getDB();
+$_isManager = (currentUser()['role'] ?? '') === 'manager';
 
 $errors = [];
 $editId   = (int)get('edit');
