@@ -6,11 +6,11 @@ USE hotel_manager;
 
 -- Default manager account (password: admin123)
 INSERT INTO users (name, email, password_hash, role) VALUES
-('Admin Gestor', 'admin@hotel.pt', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'manager');
+('Admin Gestor', 'admin@hotel.pt', '$2y$10$dKLLJ.NV70mY/2hbbnha3exaw98D2djjU75jah.G3Sc2YgWxTeN7y', 'manager');
 
 -- Default receptionist account (password: recep123)
 INSERT INTO users (name, email, password_hash, role) VALUES
-('Ana Rececionista', 'rececionista@hotel.pt', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'receptionist');
+('Ana Rececionista', 'rececionista@hotel.pt', '$2y$10$NVai1SlbBB7JvStu2OucCO.cSzSiv35IeUU/2WftMQsJXgandz6Ya', 'receptionist');
 
 -- Room types
 -- Duplo:    base 2 guests, max 5, 80€/night
