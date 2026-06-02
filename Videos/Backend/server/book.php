@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($checkIn < date('Y-m-d'))               $errors[] = 'A data de check-in não pode ser no passado.';
         if ($nif && !validateNIF($nif))             $errors[] = 'NIF inválido.';
 
+        $alternatives = [];
         if (!$errors) {
             $rt = $rtMap[$rtId];
             if ($numGuests > $rt['max_capacity'] * $numRooms) {
@@ -45,7 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $avail = availableRoomCount($rtId, $checkIn, $checkOut);
             if ($avail < $numRooms) {
-                $errors[] = "Apenas {$avail} quarto(s) disponível(is) desse tipo nessas datas.";
+                $errors[] = "Apenas {$avail} quarto(s) disponível(is) desse tipo nessas datas. Consulte as alternativas abaixo.";
+                // Suggest other room types that have availability and fit the guests
+                foreach ($rtMap as $altRt) {
+                    if ($altRt['id'] === $rtId) continue;
+                    $altAvail = availableRoomCount($altRt['id'], $checkIn, $checkOut);
+                    if ($altAvail >= $numRooms && $altRt['max_capacity'] * $numRooms >= $numGuests) {
+                        $altRt['available_count'] = $altAvail;
+                        $alternatives[] = $altRt;
+                    }
+                }
             }
         }
 
@@ -102,6 +112,24 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
         <?php foreach ($errors as $err): ?>
             <div class="alert alert-error"><?= e($err) ?></div>
         <?php endforeach; ?>
+
+        <?php if (!empty($alternatives)): ?>
+        <div class="card" style="padding:1.25rem;border-left:4px solid #f0a500;background:#fffbf0;margin-bottom:1rem">
+            <strong style="display:block;margin-bottom:.75rem">Alternativas disponíveis para <?= e(formatDate($checkIn)) ?> → <?= e(formatDate($checkOut)) ?>:</strong>
+            <div style="display:flex;flex-wrap:wrap;gap:.75rem">
+            <?php foreach ($alternatives as $alt): ?>
+                <a href="book.php?room_type_id=<?= $alt['id'] ?>&check_in=<?= urlencode($checkIn) ?>&check_out=<?= urlencode($checkOut) ?>&num_guests=<?= $numGuests ?>&num_rooms=<?= $numRooms ?>"
+                   class="btn btn-secondary" style="font-size:.9rem">
+                    <?= e($alt['name']) ?> — <?= formatMoney($alt['base_daily_rate']) ?>/noite
+                    <span style="font-size:.8rem;color:#555">(<?= $alt['available_count'] ?> disponível<?= $alt['available_count'] > 1 ? 'is' : '' ?>)</span>
+                </a>
+            <?php endforeach; ?>
+            </div>
+            <p style="font-size:.82rem;color:#888;margin-top:.6rem">
+                Sem alternativas de quarto? Experimente outras datas.
+            </p>
+        </div>
+        <?php endif; ?>
 
         <div class="policy-box">
             <strong>⚠️ Política de Cancelamento</strong>
