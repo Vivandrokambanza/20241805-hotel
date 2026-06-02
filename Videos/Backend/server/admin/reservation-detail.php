@@ -365,7 +365,7 @@ include __DIR__ . '/../includes/admin_header.php';
     <h3>💳 Pagamentos</h3>
     <div class="table-wrapper">
         <table>
-            <thead><tr><th>Data</th><th>Montante</th><th>Tipo</th><th>Método</th><th>Operador</th><th>Notas</th></tr></thead>
+            <thead><tr><th>Data</th><th>Montante</th><th>Tipo</th><th>Método</th><th>Operador</th><th>Notas</th><th></th></tr></thead>
             <tbody>
             <?php foreach ($payments as $p): ?>
             <tr>
@@ -375,6 +375,7 @@ include __DIR__ . '/../includes/admin_header.php';
                 <td><?= ucfirst($p['payment_method']) ?></td>
                 <td><?= e($p['op']) ?></td>
                 <td><?= e($p['notes']) ?></td>
+                <td><a href="comprovativo.php?id=<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-secondary" title="Comprovativo">🖨️</a></td>
             </tr>
             <?php endforeach; ?>
             </tbody>
