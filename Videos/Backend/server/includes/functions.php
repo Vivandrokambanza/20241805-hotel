@@ -1,5 +1,5 @@
 <?php
-define('BASE_URL', '');
+define('BASE_URL', '/hotel');
 define('CANCEL_HOURS_LIMIT', 24);
 
 function e(mixed $val): string {
