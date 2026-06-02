@@ -42,15 +42,30 @@ namespace WarZone
             _sfxSource.volume = _sfxVolume;
         }
 
-        public void PlayShoot()     => _sfxSource.PlayOneShot(_shootClip);
-        public void PlayEmpty()     => _sfxSource.PlayOneShot(_emptyClip);
-        public void PlayReload()    => _sfxSource.PlayOneShot(_reloadClip);
-        public void PlayHit()       => _sfxSource.PlayOneShot(_hitClip);
-        public void PlayDeath()     => _sfxSource.PlayOneShot(_deathClip);
-        public void PlayPickup()    => _sfxSource.PlayOneShot(_pickupClip);
-        public void PlayDash()      => _sfxSource.PlayOneShot(_dashClip);
-        public void PlayWaveStart() => _sfxSource.PlayOneShot(_waveStartClip);
-        public void PlayWaveEnd()   => _sfxSource.PlayOneShot(_waveEndClip);
+        [Header("Boss SFX")]
+        [SerializeField] private AudioClip _bossRoarClip;
+        [SerializeField] private AudioClip _bossMusicClip;
+        [SerializeField] private AudioClip _upgradeClip;
+
+        public void PlayShoot()        => _sfxSource?.PlayOneShot(_shootClip);
+        public void PlayEmpty()        => _sfxSource?.PlayOneShot(_emptyClip);
+        public void PlayReload()       => _sfxSource?.PlayOneShot(_reloadClip);
+        public void PlayHit()          => _sfxSource?.PlayOneShot(_hitClip);
+        public void PlayDeath()        => _sfxSource?.PlayOneShot(_deathClip);
+        public void PlayPickup()       => _sfxSource?.PlayOneShot(_pickupClip);
+        public void PlayDash()         => _sfxSource?.PlayOneShot(_dashClip);
+        public void PlayWaveStart()    => _sfxSource?.PlayOneShot(_waveStartClip);
+        public void PlayWaveEnd()      => _sfxSource?.PlayOneShot(_waveEndClip);
+        public void PlayBossRoar()     => _sfxSource?.PlayOneShot(_bossRoarClip);
+        public void PlayUpgradeSound() => _sfxSource?.PlayOneShot(_upgradeClip);
+
+        public void PlayBossMusic()
+        {
+            var clip = _bossMusicClip != null ? _bossMusicClip : _gameMusic;
+            if (_musicSource.clip == clip && _musicSource.isPlaying) return;
+            _musicSource.clip = clip;
+            _musicSource.Play();
+        }
 
         public void PlayGameMusic()
         {
