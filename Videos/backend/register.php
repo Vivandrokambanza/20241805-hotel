@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Registar';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/auth.php';
 
 if (isLoggedIn()) {
     redirect('/index.php');
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="auth-page" style="padding:2rem 1rem">
@@ -106,4 +106,4 @@ include __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

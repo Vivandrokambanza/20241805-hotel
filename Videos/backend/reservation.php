@@ -1,8 +1,8 @@
 <?php
 $pageTitle = 'Reserva';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/auth.php';
 requireRole('client');
 
 $pdo    = getDB();
@@ -21,7 +21,7 @@ $stmt->execute([$id, $userId]);
 $res = $stmt->fetch();
 if (!$res) {
     flash('Reserva não encontrada.', 'error');
-    redirect('/bookings/my-reservations.php');
+    redirect('/my-reservations.php');
 }
 
 $canEdit = in_array($res['status'], ['pending', 'active']) && canEditReservation($res['start_date']);
@@ -34,7 +34,7 @@ if ($action === 'cancel' && $canEdit) {
         $pdo->prepare('UPDATE reservations SET status = "cancelled" WHERE id = ? AND user_id = ?')->execute([$id, $userId]);
         logAction('cancel_reservation', 'reservations', $id, 'Client cancelled reservation');
         flash("Reserva #{$id} cancelada.");
-        redirect('/bookings/my-reservations.php');
+        redirect('/my-reservations.php');
     }
 }
 
@@ -73,7 +73,7 @@ if ($action === 'edit' && $canEdit && $_SERVER['REQUEST_METHOD'] === 'POST') {
         ')->execute([$checkIn, $checkOut, $numRooms, $numGuests, $breakfast ? 1 : 0, $nif ?: null, $notes ?: null, $total, $id, $userId]);
         logAction('edit_reservation', 'reservations', $id, "Client edited: {$checkIn} to {$checkOut}");
         flash("Reserva #{$id} atualizada.");
-        redirect('/bookings/my-reservations.php');
+        redirect('/my-reservations.php');
     }
 }
 
@@ -85,7 +85,7 @@ $payments = $payments->fetchAll();
 $nights   = nightsBetween($res['start_date'], $res['end_date']);
 $pageTitle = 'Reserva #' . $id;
 
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <section class="section">
@@ -213,4 +213,4 @@ include __DIR__ . '/../includes/header.php';
     </div>
 </section>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

@@ -1,8 +1,8 @@
 <?php
 $pageTitle = 'Fazer Reserva';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/auth.php';
 requireRole('client');
 
 $pdo = getDB();
@@ -85,14 +85,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             logAction('create_reservation', 'reservations', $resId, "Reservation created: {$checkIn} to {$checkOut}, type {$rt['name']}");
 
             flash("Reserva #{$resId} criada com sucesso! Aguarda confirmação do hotel.");
-            redirect('/bookings/my-reservations.php');
+            redirect('/my-reservations.php');
         }
     }
 }
 
 if ($step < 2) $step = 1;
 
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/includes/header.php';
 
 $rtSelected = ($rtId && isset($rtMap[$rtId])) ? $rtMap[$rtId] : null;
 $nights     = ($checkIn && $checkOut && $checkIn < $checkOut) ? nightsBetween($checkIn, $checkOut) : 0;
@@ -276,4 +276,4 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
     </div>
 </section>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
