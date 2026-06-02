@@ -171,8 +171,11 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
                         <input type="number" name="num_rooms" class="form-control" value="<?= e($numRooms) ?>" min="1" max="5" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Hóspedes adultos *</label>
+                        <label class="form-label">Total de hóspedes adultos *</label>
                         <input type="number" name="num_guests" class="form-control" value="<?= e($numGuests) ?>" min="1" max="14" required>
+                        <?php if ($rtSelected): ?>
+                        <p class="form-hint">Máx. <?= $rtSelected['max_capacity'] ?> por quarto × <?= $numRooms ?> = <?= $rtSelected['max_capacity'] * $numRooms ?> no total</p>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="form-group">
