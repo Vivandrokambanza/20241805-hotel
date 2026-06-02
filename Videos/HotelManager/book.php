@@ -20,6 +20,7 @@ $rtId       = (int)(post('room_type_id') ?: get('room_type_id'));
 $checkIn    = post('check_in') ?: get('check_in');
 $checkOut   = post('check_out') ?: get('check_out');
 $numGuests  = max(1, (int)(post('num_guests') ?: get('guests', 1)));
+$numChildren= max(0, (int)post('num_children'));
 $numRooms   = max(1, (int)post('num_rooms', 1));
 $breakfast  = (bool)post('include_breakfast');
 $nif        = preg_replace('/\D/', '', post('nif'));
@@ -62,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $step = 1;
         } else {
             $rt    = $rtMap[$rtId];
-            $total = calculateTotal($rt, $numRooms, $numGuests, $breakfast, $checkIn, $checkOut);
+            $total = calculateTotal($rt, $numRooms, $numGuests, $breakfast, $checkIn, $checkOut, $numChildren);
             $userId = currentUser()['id'];
 
             $stmt = $pdo->prepare('
-                INSERT INTO reservations (user_id, room_type_id, num_rooms, num_guests, start_date, end_date, include_breakfast, nif, total_estimated, notes)
-                VALUES (?,?,?,?,?,?,?,?,?,?)
+                INSERT INTO reservations (user_id, room_type_id, num_rooms, num_guests, num_children, start_date, end_date, include_breakfast, nif, total_estimated, notes)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)
             ');
-            $stmt->execute([$userId, $rtId, $numRooms, $numGuests, $checkIn, $checkOut, $breakfast ? 1 : 0, $nif ?: null, $total, $notes ?: null]);
+            $stmt->execute([$userId, $rtId, $numRooms, $numGuests, $numChildren, $checkIn, $checkOut, $breakfast ? 1 : 0, $nif ?: null, $total, $notes ?: null]);
             $resId = (int)$pdo->lastInsertId();
             logAction('create_reservation', 'reservations', $resId, "Reservation created: {$checkIn} to {$checkOut}, type {$rt['name']}");
 
@@ -85,7 +86,7 @@ include __DIR__ . '/includes/header.php';
 
 $rtSelected = ($rtId && isset($rtMap[$rtId])) ? $rtMap[$rtId] : null;
 $nights     = ($checkIn && $checkOut && $checkIn < $checkOut) ? nightsBetween($checkIn, $checkOut) : 0;
-$totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $breakfast, $checkIn, $checkOut) : 0;
+$totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $breakfast, $checkIn, $checkOut, $numChildren) : 0;
 ?>
 
 <section class="section">
@@ -142,14 +143,21 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
                         <input type="number" name="num_rooms" class="form-control" value="<?= e($numRooms) ?>" min="1" max="5" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Total de hóspedes *</label>
+                        <label class="form-label">Hóspedes adultos *</label>
                         <input type="number" name="num_guests" class="form-control" value="<?= e($numGuests) ?>" min="1" max="14" required>
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Crianças com menos de 3 anos
+                        <span class="badge badge-green" style="margin-left:.4rem">Gratuitas</span>
+                    </label>
+                    <input type="number" name="num_children" class="form-control" value="<?= e($numChildren) ?>" min="0" max="10">
+                    <p class="form-hint">Crianças com menos de 3 anos não pagam pequeno-almoço nem suplemento.</p>
+                </div>
+                <div class="form-group">
                     <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
                         <input type="checkbox" name="include_breakfast" value="1" <?= $breakfast ? 'checked' : '' ?>>
-                        <span class="form-label" style="margin:0">Incluir Pequeno-Almoço (10 € / hóspede / noite)</span>
+                        <span class="form-label" style="margin:0">Incluir Pequeno-Almoço (10 € / adulto / noite)</span>
                     </label>
                 </div>
                 <div class="form-group">
@@ -172,7 +180,14 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
                 <div class="summary-row"><span>Suplemento extra (<?= $extra ?> hóspede<?= $extra > 1 ? 's' : '' ?>)</span><span><?= formatMoney($extra * $rtSelected['extra_guest_surcharge'] * $nights) ?></span></div>
                 <?php endif; ?>
                 <?php if ($breakfast): ?>
-                <div class="summary-row"><span>Pequeno-almoço (<?= $numGuests ?> × <?= formatMoney($rtSelected['breakfast_cost_per_guest']) ?> × <?= $nights ?> noites)</span><span><?= formatMoney($rtSelected['breakfast_cost_per_guest'] * $numGuests * $nights) ?></span></div>
+                <?php $payingAdults = max(0, $numGuests - $numChildren); ?>
+                <div class="summary-row">
+                    <span>Pequeno-almoço (<?= $payingAdults ?> adulto<?= $payingAdults>1?'s':'' ?> × <?= formatMoney($rtSelected['breakfast_cost_per_guest']) ?> × <?= $nights ?> noites)</span>
+                    <span><?= formatMoney($rtSelected['breakfast_cost_per_guest'] * $payingAdults * $nights) ?></span>
+                </div>
+                <?php if ($numChildren > 0): ?>
+                <div class="summary-row"><span>Crianças &lt;3 anos (<?= $numChildren ?>)</span><span class="badge badge-green">Gratuitas</span></div>
+                <?php endif; ?>
                 <?php endif; ?>
                 <div class="summary-row"><span><strong>Total estimado</strong></span><span class="total"><?= formatMoney($totalEst) ?></span></div>
             </div>
@@ -193,7 +208,10 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
                 <div class="summary-row"><span>Check-out</span><span><?= e(formatDate($checkOut)) ?></span></div>
                 <div class="summary-row"><span>Noites</span><span><?= $nights ?></span></div>
                 <div class="summary-row"><span>Quartos</span><span><?= $numRooms ?></span></div>
-                <div class="summary-row"><span>Hóspedes</span><span><?= $numGuests ?></span></div>
+                <div class="summary-row"><span>Adultos</span><span><?= $numGuests ?></span></div>
+                <?php if ($numChildren > 0): ?>
+                <div class="summary-row"><span>Crianças &lt;3 anos</span><span><?= $numChildren ?> <span class="badge badge-green">Gratuitas</span></span></div>
+                <?php endif; ?>
                 <div class="summary-row"><span>Pequeno-almoço</span><span><?= $breakfast ? 'Sim' : 'Não' ?></span></div>
                 <?php if ($nif): ?>
                 <div class="summary-row"><span>NIF</span><span><?= e($nif) ?></span></div>
@@ -214,6 +232,7 @@ $totalEst   = $rtSelected ? calculateTotal($rtSelected, $numRooms, $numGuests, $
             <input type="hidden" name="check_out" value="<?= e($checkOut) ?>">
             <input type="hidden" name="num_rooms" value="<?= e($numRooms) ?>">
             <input type="hidden" name="num_guests" value="<?= e($numGuests) ?>">
+            <input type="hidden" name="num_children" value="<?= e($numChildren) ?>">
             <input type="hidden" name="include_breakfast" value="<?= $breakfast ? '1' : '0' ?>">
             <input type="hidden" name="nif" value="<?= e($nif) ?>">
             <input type="hidden" name="notes" value="<?= e($notes) ?>">
