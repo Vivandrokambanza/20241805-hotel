@@ -4,8 +4,43 @@ require_once __DIR__ . '/../includes/db.php';
 $pdo = getDB();
 
 $errors = [];
-$editId = (int)get('edit');
+$editId   = (int)get('edit');
 $deleteId = (int)get('delete');
+$showNew  = get('action') === 'new';
+
+// Create new guest
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && post('_action') === 'create') {
+    verifyCsrf();
+    $name    = trim(post('name'));
+    $email   = trim(post('email'));
+    $phone   = trim(post('phone'));
+    $docType = post('document_type') ?: null;
+    $docNum  = trim(post('document_number')) ?: null;
+    $nif     = preg_replace('/\D/', '', post('nif'));
+    $pwd     = post('password');
+
+    if (!$name)                         $errors[] = 'Nome obrigatório.';
+    if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email inválido.';
+    if (strlen($pwd) < 6)               $errors[] = 'Password deve ter pelo menos 6 caracteres.';
+    if ($nif && !validateNIF($nif))     $errors[] = 'NIF inválido.';
+
+    if (!$errors) {
+        $exists = $pdo->prepare('SELECT id FROM users WHERE email = ?');
+        $exists->execute([$email]);
+        if ($exists->fetch()) $errors[] = 'Já existe um utilizador com este email.';
+    }
+
+    if (!$errors) {
+        $hash = password_hash($pwd, PASSWORD_BCRYPT);
+        $pdo->prepare('INSERT INTO users (name, email, password_hash, role, phone, document_type, document_number, nif) VALUES (?,?,?,"client",?,?,?,?)')
+            ->execute([$name, $email, $hash, $phone ?: null, $docType, $docNum, $nif ?: null]);
+        $newId = (int)$pdo->lastInsertId();
+        logAction('create_guest', 'users', $newId, "Receptionist created guest: {$email}");
+        flash("Hóspede {$name} registado com sucesso.");
+        redirect('/admin/guests.php');
+    }
+    $showNew = true;
+}
 
 // Toggle status
 if ($deleteId && $_isManager) {
@@ -53,7 +88,46 @@ if ($editId) {
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">👥 Hóspedes</div>
+<div class="admin-page-title">
+    <span>👥 Hóspedes</span>
+    <a href="?action=new" class="btn btn-primary btn-sm">+ Registar Hóspede</a>
+</div>
+
+<?php if ($showNew && !$editId): ?>
+<div class="detail-card" style="margin-bottom:1.5rem;max-width:640px">
+    <h3>Registar Novo Hóspede</h3>
+    <?php foreach ($errors as $e_): ?><div class="alert alert-error"><?= e($e_) ?></div><?php endforeach; ?>
+    <form method="post" style="margin-top:.75rem">
+        <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="_action" value="create">
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-control" value="<?= e(post('name')) ?>" required></div>
+            <div class="form-group"><label class="form-label">Email *</label><input type="email" name="email" class="form-control" value="<?= e(post('email')) ?>" required></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Password *</label><input type="password" name="password" class="form-control" minlength="6" required></div>
+            <div class="form-group"><label class="form-label">Telefone</label><input type="tel" name="phone" class="form-control" value="<?= e(post('phone')) ?>"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tipo de Documento</label>
+                <select name="document_type" class="form-control">
+                    <option value="">—</option>
+                    <option value="cc" <?= post('document_type')==='cc'?'selected':'' ?>>Cartão de Cidadão</option>
+                    <option value="passport" <?= post('document_type')==='passport'?'selected':'' ?>>Passaporte</option>
+                    <option value="other" <?= post('document_type')==='other'?'selected':'' ?>>Outro</option>
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">Número de Documento</label><input type="text" name="document_number" class="form-control" value="<?= e(post('document_number')) ?>"></div>
+        </div>
+        <div class="form-group"><label class="form-label">NIF <span style="font-weight:400;color:#888">(opcional)</span></label><input type="text" name="nif" class="form-control" value="<?= e(post('nif')) ?>" maxlength="9"></div>
+        <div style="display:flex;gap:.75rem">
+            <a href="guests.php" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">✓ Registar Hóspede</button>
+        </div>
+    </form>
+</div>
+<?php endif; ?>
 
 <?php if ($editGuest): ?>
 <div class="detail-card" style="margin-bottom:1.5rem;max-width:640px">
