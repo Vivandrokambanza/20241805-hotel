@@ -154,3 +154,20 @@ function validateNIF(string $nif): bool {
     if ($check >= 10) $check = 0;
     return $check === (int)$nif[8];
 }
+
+function validateDocument(string $type, string $number): bool {
+    $number = trim($number);
+    if ($type === 'cc') {
+        // Cartão de Cidadão português: 6–15 caracteres alfanuméricos
+        return (bool)preg_match('/^[A-Za-z0-9]{6,15}$/', $number);
+    }
+    if ($type === 'passport') {
+        // Passaporte: 5–12 caracteres alfanuméricos (PT: 2 letras + 6 dígitos)
+        return (bool)preg_match('/^[A-Za-z0-9]{5,12}$/', $number);
+    }
+    if ($type === 'other') {
+        // Outro documento: 3–30 caracteres
+        return strlen($number) >= 3 && strlen($number) <= 30;
+    }
+    return true;
+}

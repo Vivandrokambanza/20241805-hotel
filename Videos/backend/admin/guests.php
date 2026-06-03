@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && post('_action') === 'create') {
     if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email inválido.';
     if (strlen($pwd) < 6)               $errors[] = 'Password deve ter pelo menos 6 caracteres.';
     if ($nif && !validateNIF($nif))     $errors[] = 'NIF inválido.';
+    if ($docType && $docNum && !validateDocument($docType, $docNum)) $errors[] = 'Número de documento inválido para o tipo selecionado.';
 
     if (!$errors) {
         $exists = $pdo->prepare('SELECT id FROM users WHERE email = ?');
@@ -65,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $editId) {
 
     if (!$name) $errors[] = 'Nome obrigatório.';
     if ($nif && !validateNIF($nif)) $errors[] = 'NIF inválido.';
+    if ($docType && $docNum && !validateDocument($docType, $docNum)) $errors[] = 'Número de documento inválido para o tipo selecionado.';
 
     if (!$errors) {
         $pdo->prepare('UPDATE users SET name=?, phone=?, document_type=?, document_number=?, nif=? WHERE id=? AND role="client"')
