@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$errors) {
         if ($editId) {
             $pdo->prepare('UPDATE room_types SET name=?,base_capacity=?,max_capacity=?,base_daily_rate=?,breakfast_cost_per_guest=?,extra_guest_surcharge=?,amenities=?,description=?,status=? WHERE id=?')
-                ->execute(array_values($data) + [$editId]);
+                ->execute([...array_values($data), $editId]);
             logAction('edit_room_type', 'room_types', $editId, 'Updated');
             flash('Tipo de quarto atualizado.');
         } else {
