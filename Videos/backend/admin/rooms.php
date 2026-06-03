@@ -6,8 +6,23 @@ require_once __DIR__ . '/../includes/db.php';
 requireRole('manager');
 $pdo = getDB();
 
-$errors = [];
-$editId = (int)get('edit');
+$errors   = [];
+$editId   = (int)get('edit');
+$deleteId = (int)get('delete');
+
+// Delete room
+if ($deleteId) {
+    $check = $pdo->prepare('SELECT COUNT(*) FROM reservation_rooms WHERE room_id = ?');
+    $check->execute([$deleteId]);
+    if ((int)$check->fetchColumn() > 0) {
+        flash('Não é possível apagar — quarto tem histórico de reservas.', 'error');
+    } else {
+        $pdo->prepare('DELETE FROM rooms WHERE id=?')->execute([$deleteId]);
+        logAction('delete_room', 'rooms', $deleteId, 'Deleted');
+        flash('Quarto apagado.');
+    }
+    redirect('/admin/rooms.php');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrf();
@@ -95,7 +110,11 @@ include __DIR__ . '/../includes/admin_header.php';
                 <td><?= e($r['floor']) ?></td>
                 <td><?= e($r['type_name']) ?></td>
                 <td><span class="badge status-<?= e($r['status']) ?>"><?= ['available'=>'Disponível','occupied'=>'Ocupado','maintenance'=>'Manutenção'][$r['status']] ?></span></td>
-                <td><a href="?edit=<?= $r['id'] ?>" class="btn btn-sm btn-warning">Editar</a></td>
+                <td style="display:flex;gap:.4rem">
+                    <a href="?edit=<?= $r['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="?delete=<?= $r['id'] ?>" class="btn btn-sm btn-danger"
+                       data-confirm="Apagar quarto <?= e($r['room_number']) ?>?">Apagar</a>
+                </td>
             </tr>
             <?php endforeach; ?>
             </tbody>
