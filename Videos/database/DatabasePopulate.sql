@@ -30,7 +30,7 @@ INSERT INTO room_types (name, base_capacity, max_capacity, base_daily_rate, brea
  'Quarto familiar espacoso com cama de casal e beliche, perfeito para familias.',
  'Wi-Fi,TV,Ar Condicionado,Casa de Banho Privada,Varanda'),
 
-('Suite',    2, 5, 200.00, 10.00, 25.00,
+('Solteiro-Suite', 2, 5, 200.00, 10.00, 25.00,
  'Suite de luxo com sala de estar separada, vista panoramica e servicos premium.',
  'Wi-Fi,TV 4K,Ar Condicionado,Casa de Banho de Luxo,Minibar,Varanda,Jacuzzi');
 
@@ -47,6 +47,6 @@ INSERT INTO rooms (room_number, room_type_id, floor) VALUES
 INSERT INTO rooms (room_number, room_type_id, floor) VALUES
 ('105', 3, 1), ('106', 3, 1), ('205', 3, 2), ('206', 3, 2), ('303', 3, 3);
 
--- Suite rooms (type 4) - all on floor 4
+-- Solteiro-Suite rooms (type 4) - all on floor 4
 INSERT INTO rooms (room_number, room_type_id, floor) VALUES
 ('401', 4, 4), ('402', 4, 4), ('403', 4, 4), ('404', 4, 4), ('405', 4, 4);
