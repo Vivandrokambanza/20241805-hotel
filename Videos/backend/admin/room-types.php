@@ -7,7 +7,22 @@ requireRole('manager');
 $pdo = getDB();
 
 $errors = [];
-$editId = (int)get('edit');
+$editId   = (int)get('edit');
+$deleteId = (int)get('delete');
+
+// Delete
+if ($deleteId) {
+    $check = $pdo->prepare('SELECT COUNT(*) FROM reservations WHERE room_type_id = ? AND status NOT IN ("cancelled","completed")');
+    $check->execute([$deleteId]);
+    if ((int)$check->fetchColumn() > 0) {
+        flash('Não é possível apagar — existem reservas ativas neste tipo de quarto.', 'error');
+    } else {
+        $pdo->prepare('DELETE FROM room_types WHERE id=?')->execute([$deleteId]);
+        logAction('delete_room_type', 'room_types', $deleteId, 'Deleted');
+        flash('Tipo de quarto apagado.');
+    }
+    redirect('/admin/room-types.php');
+}
 
 // Save
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,7 +112,11 @@ include __DIR__ . '/../includes/admin_header.php';
                     <td><?= formatMoney($rt['base_daily_rate']) ?></td>
                     <td><?= e($rt['room_count']) ?></td>
                     <td><span class="badge <?= $rt['status']==='active'?'badge-green':'badge-red' ?>"><?= $rt['status']==='active'?'Ativo':'Inativo' ?></span></td>
-                    <td><a href="?edit=<?= $rt['id'] ?>" class="btn btn-sm btn-warning">Editar</a></td>
+                    <td style="display:flex;gap:.4rem">
+                        <a href="?edit=<?= $rt['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="?delete=<?= $rt['id'] ?>" class="btn btn-sm btn-danger"
+                           data-confirm="Apagar tipo '<?= e($rt['name']) ?>'? Esta ação é irreversível.">Apagar</a>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
