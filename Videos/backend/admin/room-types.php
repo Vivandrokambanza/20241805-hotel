@@ -12,9 +12,13 @@ $deleteId = (int)get('delete');
 
 // Delete
 if ($deleteId) {
-    $check = $pdo->prepare('SELECT COUNT(*) FROM reservations WHERE room_type_id = ? AND status NOT IN ("cancelled","completed")');
-    $check->execute([$deleteId]);
-    if ((int)$check->fetchColumn() > 0) {
+    $checkRooms = $pdo->prepare('SELECT COUNT(*) FROM rooms WHERE room_type_id = ?');
+    $checkRooms->execute([$deleteId]);
+    $checkRes = $pdo->prepare('SELECT COUNT(*) FROM reservations WHERE room_type_id = ? AND status NOT IN ("cancelled","completed")');
+    $checkRes->execute([$deleteId]);
+    if ((int)$checkRooms->fetchColumn() > 0) {
+        flash('Não é possível apagar — existem quartos deste tipo. Apague primeiro os quartos.', 'error');
+    } elseif ((int)$checkRes->fetchColumn() > 0) {
         flash('Não é possível apagar — existem reservas ativas neste tipo de quarto.', 'error');
     } else {
         $pdo->prepare('DELETE FROM room_types WHERE id=?')->execute([$deleteId]);
