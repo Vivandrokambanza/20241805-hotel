@@ -60,7 +60,7 @@ $payments = $stmtP->fetchAll();
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">💰 Pagamentos</div>
+<div class="admin-page-title"> Pagamentos</div>
 
 <div class="grid-2" style="gap:1.5rem">
     <div>
@@ -111,7 +111,7 @@ include __DIR__ . '/../includes/admin_header.php';
                     <label class="form-label">Notas</label>
                     <textarea name="notes" class="form-control" rows="2" placeholder="Observações sobre o pagamento"></textarea>
                 </div>
-                <button type="submit" class="btn btn-success">💳 Registar Pagamento</button>
+                <button type="submit" class="btn btn-success"> Registar Pagamento</button>
             </form>
         </div>
     </div>
@@ -121,7 +121,7 @@ include __DIR__ . '/../includes/admin_header.php';
             <h3 style="font-size:1rem;font-weight:700">Histórico de Pagamentos</h3>
             <form method="get" style="display:flex;gap:.5rem">
                 <input type="text" name="search" class="form-control form-control-sm" value="<?= e($search) ?>" placeholder="Pesquisar...">
-                <button class="btn btn-sm btn-secondary">🔍</button>
+                <button class="btn btn-sm btn-secondary">button>
             </form>
         </div>
         <div class="table-wrapper">
@@ -139,7 +139,7 @@ include __DIR__ . '/../includes/admin_header.php';
                     <td><strong><?= formatMoney($p['amount']) ?></strong></td>
                     <td><?= $p['payment_type'] === 'total' ? 'Total' : 'Parcial' ?></td>
                     <td><?= e($p['op_name']) ?></td>
-                    <td><a href="comprovativo.php?id=<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-secondary" title="Comprovativo">🖨️</a></td>
+                    <td><a href="comprovativo.php?id=<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-secondary" title="Comprovativo"></a></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>

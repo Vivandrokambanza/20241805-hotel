@@ -27,7 +27,7 @@ $reservations = $stmt->fetchAll();
 include __DIR__ . '/../includes/admin_header.php';
 ?>
 <div class="admin-page-title">
-    <span>📅 Reservas</span>
+    <span> Reservas</span>
     <a href="reservation-detail.php?action=new" class="btn btn-primary">+ Nova Reserva</a>
 </div>
 
@@ -45,7 +45,7 @@ include __DIR__ . '/../includes/admin_header.php';
         <form method="get" style="display:flex;gap:.5rem">
             <input type="hidden" name="status" value="<?= e($status) ?>">
             <input type="text" name="search" class="form-control" value="<?= e($search) ?>" placeholder="Nome, email ou #ID">
-            <button type="submit" class="btn btn-primary btn-sm">🔍</button>
+            <button type="submit" class="btn btn-primary btn-sm"></button>
         </form>
     </div>
     <div class="form-group">

@@ -40,7 +40,7 @@ $distinctActions = $pdo->query('SELECT DISTINCT action FROM audit_logs ORDER BY 
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">📋 Logs de Auditoria</div>
+<div class="admin-page-title"> Logs de Auditoria</div>
 
 <div class="filter-bar">
     <div class="form-group">
@@ -57,7 +57,7 @@ include __DIR__ . '/../includes/admin_header.php';
         <form method="get" style="display:flex;gap:.5rem">
             <input type="hidden" name="action_filter" value="<?= e($action) ?>">
             <input type="text" name="search" class="form-control" value="<?= e($search) ?>" placeholder="Pesquisar...">
-            <button class="btn btn-primary btn-sm">🔍</button>
+            <button class="btn btn-primary btn-sm"></button>
         </form>
     </div>
     <div style="margin-left:auto;color:#888;font-size:.85rem;align-self:flex-end">

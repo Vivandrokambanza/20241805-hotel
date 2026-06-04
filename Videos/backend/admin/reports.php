@@ -90,7 +90,7 @@ $topGuests = $pdo->query('
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">📈 Relatórios</div>
+<div class="admin-page-title"> Relatórios</div>
 
 <!-- Period filter -->
 <div class="filter-bar" style="margin-bottom:1.5rem">
@@ -103,16 +103,16 @@ include __DIR__ . '/../includes/admin_header.php';
 
 <!-- Summary cards -->
 <div class="stat-cards" style="margin-bottom:2rem">
-    <div class="stat-card"><span class="icon">🏨</span><div class="value"><?= $occupancyRate ?>%</div><div class="label">Ocupação Atual</div></div>
-    <div class="stat-card"><span class="icon">💰</span><div class="value"><?= formatMoney($revenue) ?></div><div class="label">Receita no Período</div></div>
-    <div class="stat-card"><span class="icon">📅</span><div class="value"><?= array_sum($byStatus) ?></div><div class="label">Total de Reservas</div></div>
+    <div class="stat-card"><span class="icon"></span><div class="value"><?= $occupancyRate ?>%</div><div class="label">Ocupação Atual</div></div>
+    <div class="stat-card"><span class="icon"></span><div class="value"><?= formatMoney($revenue) ?></div><div class="label">Receita no Período</div></div>
+    <div class="stat-card"><span class="icon"></span><div class="value"><?= array_sum($byStatus) ?></div><div class="label">Total de Reservas</div></div>
     <div class="stat-card"><span class="icon">✓</span><div class="value"><?= ($byStatus['completed']??0)+($byStatus['checked_in']??0) ?></div><div class="label">Estadias Realizadas</div></div>
 </div>
 
 <div class="grid-2" style="gap:1.5rem;margin-bottom:1.5rem">
     <!-- Reservations by status -->
     <div class="detail-card">
-        <h3>📊 Reservas por Estado <small style="font-weight:400;color:#888">(no período)</small></h3>
+        <h3> Reservas por Estado <small style="font-weight:400;color:#888">(no período)</small></h3>
         <div style="display:flex;gap:1rem;flex-wrap:wrap;margin:.75rem 0 1rem">
             <div style="text-align:center;padding:.5rem 1rem;background:#e8f4fd;border-radius:6px">
                 <div style="font-size:1.4rem;font-weight:700;color:#2563eb"><?= $futureCount ?></div>
@@ -140,7 +140,7 @@ include __DIR__ . '/../includes/admin_header.php';
     </div>
     <!-- Revenue by type -->
     <div class="detail-card">
-        <h3>💳 Receita por Tipo de Quarto</h3>
+        <h3> Receita por Tipo de Quarto</h3>
         <div class="table-wrapper" style="margin-top:.75rem">
             <table>
                 <thead><tr><th>Tipo</th><th>Reservas</th><th>Receita</th></tr></thead>
@@ -156,7 +156,7 @@ include __DIR__ . '/../includes/admin_header.php';
 
 <!-- Daily occupancy table -->
 <div class="detail-card" style="margin-bottom:1.5rem">
-    <h3>📅 Ocupação Diária</h3>
+    <h3> Ocupação Diária</h3>
     <div class="table-wrapper" style="margin-top:.75rem">
         <table>
             <thead><tr><th>Data</th><th>Quartos Ocupados</th><th>Taxa (%)</th></tr></thead>
@@ -175,7 +175,7 @@ include __DIR__ . '/../includes/admin_header.php';
 
 <!-- Currently occupied rooms -->
 <div class="detail-card" style="margin-bottom:1.5rem">
-    <h3>🚪 Quartos Atualmente Ocupados (<?= count($occupiedRoomsList) ?>/<?= $totalRooms ?>)</h3>
+    <h3> Quartos Atualmente Ocupados (<?= count($occupiedRoomsList) ?>/<?= $totalRooms ?>)</h3>
     <?php if (empty($occupiedRoomsList)): ?>
         <p style="color:#888;margin-top:.75rem">Nenhum quarto ocupado neste momento.</p>
     <?php else: ?>
@@ -201,7 +201,7 @@ include __DIR__ . '/../includes/admin_header.php';
 
 <!-- Top guests -->
 <div class="detail-card">
-    <h3>👥 Histórico de Hóspedes (Top 10)</h3>
+    <h3> Histórico de Hóspedes (Top 10)</h3>
     <div class="table-wrapper" style="margin-top:.75rem">
         <table>
             <thead><tr><th>Nome</th><th>Email</th><th>Reservas</th><th>Total Gasto</th><th>Última Estadia</th></tr></thead>
