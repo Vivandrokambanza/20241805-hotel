@@ -79,13 +79,13 @@ $remaining = max(0, $p['total_estimated'] - $p['total_paid']);
 
 <div class="receipt-wrap">
     <div class="actions">
-        <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="btn btn-primary" onclick="window.print()"> Imprimir</button>
         <a href="reservation-detail.php?id=<?= $p['res_id'] ?>" class="btn btn-secondary">← Voltar à Reserva</a>
     </div>
 
     <div class="receipt-header">
         <div>
-            <div class="hotel-name">🏨 Hotel Vivandro</div>
+            <div class="hotel-name"> Hotel Vivandro</div>
             <div class="hotel-sub">Lisboa, Portugal &nbsp;|&nbsp; hotel@vivandro.pt &nbsp;|&nbsp; +351 21 000 0000</div>
         </div>
         <div class="receipt-title">
