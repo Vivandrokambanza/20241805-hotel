@@ -38,28 +38,28 @@ include __DIR__ . '/../includes/admin_header.php';
 ?>
 
 <div class="admin-page-title">
-    <span>📊 Dashboard</span>
+    <span> Dashboard</span>
     <span style="font-size:.9rem;color:#777;font-weight:400"><?= date('d/m/Y') ?></span>
 </div>
 
 <div class="stat-cards">
     <div class="stat-card">
-        <span class="icon">🚪</span>
+        <span class="icon"></span>
         <div class="value"><?= $occupancyRate ?>%</div>
         <div class="label">Taxa de Ocupação<br><small><?= $occupiedRooms ?>/<?= $totalRooms ?> quartos</small></div>
     </div>
     <div class="stat-card">
-        <span class="icon">📅</span>
+        <span class="icon"></span>
         <div class="value"><?= $pendingReservations ?></div>
         <div class="label">Reservas Pendentes</div>
     </div>
     <div class="stat-card">
-        <span class="icon">🔑</span>
+        <span class="icon"></span>
         <div class="value"><?= $todayCheckins ?></div>
         <div class="label">Check-ins Hoje</div>
     </div>
     <div class="stat-card">
-        <span class="icon">💰</span>
+        <span class="icon"></span>
         <div class="value"><?= formatMoney($monthRevenue) ?></div>
         <div class="label">Receita Este Mês</div>
     </div>
@@ -117,11 +117,11 @@ include __DIR__ . '/../includes/admin_header.php';
 </div>
 
 <div class="detail-card">
-    <h3>⚠️ Alertas</h3>
+    <h3> Alertas</h3>
     <div style="display:flex;gap:1.5rem;flex-wrap:wrap;padding:.5rem 0">
-        <div>📤 <strong><?= $todayCheckouts ?></strong> check-out<?= $todayCheckouts !== 1 ? 's' : '' ?> pendente<?= $todayCheckouts !== 1 ? 's' : '' ?> hoje</div>
-        <div>💳 Pagamentos em falta: <strong><?= formatMoney(max(0, $pendingPayments)) ?></strong></div>
-        <div>🔧 Quartos em manutenção: <strong><?= (int)$pdo->query('SELECT COUNT(*) FROM rooms WHERE status="maintenance"')->fetchColumn() ?></strong></div>
+        <div> <strong><?= $todayCheckouts ?></strong> check-out<?= $todayCheckouts !== 1 ? 's' : '' ?> pendente<?= $todayCheckouts !== 1 ? 's' : '' ?> hoje</div>
+        <div> Pagamentos em falta: <strong><?= formatMoney(max(0, $pendingPayments)) ?></strong></div>
+        <div> Quartos em manutenção: <strong><?= (int)$pdo->query('SELECT COUNT(*) FROM rooms WHERE status="maintenance"')->fetchColumn() ?></strong></div>
     </div>
 </div>
 
