@@ -243,24 +243,24 @@ include __DIR__ . '/../includes/admin_header.php';
     <?php endif; ?>
     <?php if ($res['status'] === 'active'): ?>
     <form method="post"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="_action" value="checkin">
-        <button class="btn btn-primary">🔑 Efectuar Check-in</button>
+        <button class="btn btn-primary"> Efectuar Check-in</button>
     </form>
     <?php endif; ?>
     <?php if ($res['status'] === 'checked_in'): ?>
-        <button class="btn btn-warning" onclick="document.getElementById('checkout-form').style.display='block';this.style.display='none'">🚪 Efectuar Check-out + Registar Hóspede</button>
+        <button class="btn btn-warning" onclick="document.getElementById('checkout-form').style.display='block';this.style.display='none'"> Efectuar Check-out + Registar Hóspede</button>
     <?php endif; ?>
     <?php if (in_array($res['status'], ['pending','active'])): ?>
     <form method="post"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="_action" value="cancel">
         <button class="btn btn-danger" data-confirm="Cancelar esta reserva?">✕ Cancelar Reserva</button>
     </form>
     <?php endif; ?>
-    <a href="payments.php?reservation_id=<?= $id ?>" class="btn btn-secondary">💰 Registar Pagamento</a>
+    <a href="payments.php?reservation_id=<?= $id ?>" class="btn btn-secondary"> Registar Pagamento</a>
 </div>
 
 <?php if ($res['status'] === 'checked_in'): ?>
 <!-- Formulário de Checkout com Registo de Hóspede (proposta fase 1) -->
 <div id="checkout-form" style="display:<?= !empty($errors) ? 'block' : 'none' ?>" class="detail-card" style="margin-bottom:1.5rem">
-    <h3>🚪 Check-out + Registo do Hóspede</h3>
+    <h3> Check-out + Registo do Hóspede</h3>
     <p style="color:#555;font-size:.9rem;margin:.5rem 0 1rem">
         Confirme ou complete os dados do hóspede antes de efectuar o check-out. Este registo formaliza a estadia no sistema do hotel.
     </p>
@@ -311,7 +311,7 @@ include __DIR__ . '/../includes/admin_header.php';
 
 <div class="detail-grid">
     <div class="detail-card">
-        <h3>🏨 Detalhes</h3>
+        <h3> Detalhes</h3>
         <div class="dl">
             <dt>Estado</dt><dd><span class="badge status-<?= e($res['status']) ?>"><?= ['pending'=>'Pendente','active'=>'Confirmada','checked_in'=>'Check-in','completed'=>'Concluída','cancelled'=>'Cancelada'][$res['status']] ?? $res['status'] ?></span></dd>
             <dt>Tipo</dt><dd><?= e($res['type_name']) ?></dd>
@@ -329,13 +329,13 @@ include __DIR__ . '/../includes/admin_header.php';
         </div>
     </div>
     <div class="detail-card">
-        <h3>👤 Cliente</h3>
+        <h3> Cliente</h3>
         <div class="dl">
             <dt>Nome</dt><dd><?= e($res['client_name']) ?></dd>
             <dt>Email</dt><dd><?= e($res['client_email']) ?></dd>
             <?php if ($res['client_phone']): ?><dt>Tel.</dt><dd><?= e($res['client_phone']) ?></dd><?php endif; ?>
         </div>
-        <h3 style="margin-top:1.25rem">💰 Faturação</h3>
+        <h3 style="margin-top:1.25rem"> Faturação</h3>
         <div class="dl">
             <dt>Total est.</dt><dd><strong><?= formatMoney($res['total_estimated']) ?></strong></dd>
             <dt>Total pago</dt><dd><?= formatMoney($res['total_paid']) ?></dd>
@@ -347,7 +347,7 @@ include __DIR__ . '/../includes/admin_header.php';
 <!-- Assigned rooms -->
 <?php if (!empty($assignedRooms)): ?>
 <div class="detail-card" style="margin-top:1.25rem">
-    <h3>🚪 Quartos Atribuídos</h3>
+    <h3> Quartos Atribuídos</h3>
     <div class="table-wrapper">
         <table>
             <thead><tr><th>Quarto</th><th>Piso</th><th>Check-in</th><th>Check-out</th></tr></thead>
@@ -364,7 +364,7 @@ include __DIR__ . '/../includes/admin_header.php';
 <!-- Payments -->
 <?php if (!empty($payments)): ?>
 <div class="detail-card" style="margin-top:1.25rem">
-    <h3>💳 Pagamentos</h3>
+    <h3> Pagamentos</h3>
     <div class="table-wrapper">
         <table>
             <thead><tr><th>Data</th><th>Montante</th><th>Tipo</th><th>Método</th><th>Operador</th><th>Notas</th><th></th></tr></thead>
@@ -377,7 +377,7 @@ include __DIR__ . '/../includes/admin_header.php';
                 <td><?= ucfirst($p['payment_method']) ?></td>
                 <td><?= e($p['op']) ?></td>
                 <td><?= e($p['notes']) ?></td>
-                <td><a href="comprovativo.php?id=<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-secondary" title="Comprovativo">🖨️</a></td>
+                <td><a href="comprovativo.php?id=<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-secondary" title="Comprovativo"></a></td>
             </tr>
             <?php endforeach; ?>
             </tbody>
@@ -389,7 +389,7 @@ include __DIR__ . '/../includes/admin_header.php';
 <!-- Edit form (admin can always edit non-completed/non-cancelled) -->
 <?php if (in_array($res['status'], ['pending','active'])): ?>
 <div class="detail-card" style="margin-top:1.25rem">
-    <h3>✏️ Editar Reserva</h3>
+    <h3> Editar Reserva</h3>
     <form method="post" style="margin-top:.75rem">
         <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
         <input type="hidden" name="_action" value="edit">
