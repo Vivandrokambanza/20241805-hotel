@@ -20,15 +20,17 @@ Permite que clientes pesquisem e reservem quartos, e que a equipa do hotel (gest
 ## Estrutura do Projeto
 
 ```text
-20241805_hotel_vivandro/
+20241805/
 ├── backend/
 │   ├── index.php
 │   ├── login.php
 │   ├── register.php
+│   ├── logout.php
 │   ├── book.php
 │   ├── my-reservations.php
 │   ├── reservation.php
 │   ├── about.php
+│   ├── ajax_price.php
 │   ├── admin/
 │   │   ├── index.php
 │   │   ├── reservations.php
@@ -50,13 +52,29 @@ Permite que clientes pesquisem e reservem quartos, e que a equipa do hotel (gest
 │   │   ├── footer.php
 │   │   ├── admin_header.php
 │   │   └── admin_footer.php
+│   ├── models/
+│   │   ├── UserModel.php
+│   │   ├── RoomModel.php
+│   │   ├── RoomTypeModel.php
+│   │   ├── ReservationModel.php
+│   │   └── PaymentModel.php
+│   ├── views/
+│   │   └── admin/
+│   │       ├── dashboard.php
+│   │       ├── checkin.php
+│   │       ├── guests.php
+│   │       ├── payments.php
+│   │       ├── reservations.php
+│   │       ├── room-types.php
+│   │       ├── rooms.php
+│   │       └── users.php
 │   └── assets/
 │       ├── css/style.css
 │       └── js/main.js
 └── database/
     ├── DatabaseCreate.sql
     ├── DatabasePopulate.sql
-    └── DatabaseQueries.sql +
+    └── DatabaseQueries.sql
 ```
 
 ## Instalação Local (XAMPP)
@@ -66,13 +84,6 @@ Permite que clientes pesquisem e reservem quartos, e que a equipa do hotel (gest
 3. Abrir phpMyAdmin e importar `database/DatabaseCreate.sql`
 4. Importar `database/DatabasePopulate.sql`
 5. Abrir `http://localhost/hotel/` no browser
-
-## Credenciais de Demonstração
-
-| Perfil | Email | Password |
-| --- | --- | --- |
-| Gestor | admin@iade.pt | admin123 |
-| Rececionista | rececionista@iade.pt | recep123 |
 
 ## Repositório GitHub
 
