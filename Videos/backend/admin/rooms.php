@@ -62,7 +62,7 @@ if ($editId) { $s=$pdo->prepare('SELECT * FROM rooms WHERE id=?');$s->execute([$
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">🚪 Quartos</div>
+<div class="admin-page-title"> Quartos</div>
 
 <div class="grid-2" style="gap:1.5rem">
     <div class="detail-card">

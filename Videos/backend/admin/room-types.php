@@ -68,7 +68,7 @@ if ($editId) { $s = $pdo->prepare('SELECT * FROM room_types WHERE id=?'); $s->ex
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">🏷️ Tipos de Quarto</div>
+<div class="admin-page-title"> Tipos de Quarto</div>
 
 <div class="grid-2" style="gap:1.5rem">
     <div>

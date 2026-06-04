@@ -95,7 +95,7 @@ if ($editId) {
 include __DIR__ . '/../includes/admin_header.php';
 ?>
 <div class="admin-page-title">
-    <span>👥 Hóspedes</span>
+    <span> Hóspedes</span>
     <a href="?action=new" class="btn btn-primary btn-sm">+ Registar Hóspede</a>
 </div>
 
@@ -180,7 +180,7 @@ include __DIR__ . '/../includes/admin_header.php';
         <form method="get" style="display:flex;gap:.5rem">
             <input type="hidden" name="status" value="<?= e($statusF) ?>">
             <input type="text" name="search" class="form-control" value="<?= e($search) ?>" placeholder="Nome ou email">
-            <button class="btn btn-primary btn-sm">🔍</button>
+            <button class="btn btn-primary btn-sm"></button>
         </form>
     </div>
 </div>

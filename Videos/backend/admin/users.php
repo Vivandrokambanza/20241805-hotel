@@ -79,7 +79,7 @@ if ($editId) { $s = $pdo->prepare('SELECT * FROM users WHERE id=? AND role != "c
 
 include __DIR__ . '/../includes/admin_header.php';
 ?>
-<div class="admin-page-title">👤 Utilizadores do Sistema</div>
+<div class="admin-page-title"> Utilizadores do Sistema</div>
 
 <div class="grid-2" style="gap:1.5rem">
     <div class="detail-card">
