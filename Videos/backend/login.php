@@ -34,7 +34,7 @@ include __DIR__ . '/includes/header.php';
 
 <div class="auth-page">
     <div class="auth-card">
-        <div class="auth-title">🔐 Entrar na sua conta</div>
+        <div class="auth-title"> Entrar na sua conta</div>
 
         <?php foreach ($errors as $err): ?>
             <div class="alert alert-error"><?= e($err) ?></div>
